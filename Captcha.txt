@@ -1,0 +1,121 @@
+Визуал
+<Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1"
+                VerticalAlignment="Center">
+            <Border Background="LightGray" BorderBrush="#3F3F3F"
+                    BorderThickness="1" Height="96">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Каптча" Margin="0,4"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel x:Name="Signs" Grid.Row="1" 
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                    <Grid Grid.Row="2" Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="re" Click="ReButton_Click"/>
+                        <TextBox x:Name="AnswerBox" Grid.Column="1"/>
+                        <Button Grid.Column="2" Content="Далее"
+                                Click="NextButton_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+
+Код:
+// Массив символов из которых будем генерировать
+        char[] allowedSigns = 
+            ("QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwe" +
+            "rtyuiopasdfghjklzxcvbnm1234567890").ToCharArray();
+        private string CaptchaAnswer { get; set; }
+
+        // Генерация каптчи
+        private void Captcha_Generate()
+        {
+            Signs.Children.Clear();
+            AnswerBox.Text = "";
+
+            CaptchaAnswer = "";
+            Random rand = new Random();
+            int power = 8; // Кол во символов в каптче
+
+            for(int i = 0; i < power; i++)
+            {
+                char sign =
+                    allowedSigns[rand.Next(0, allowedSigns.Length)]; // Вытягиваем рандомный символ из массива
+
+                CaptchaAnswer += sign; // Записываем в ответ каптчи
+
+                var tg = Sign_Wrap();
+
+                // Создаем текст блок
+                TextBlock tb = new TextBlock()
+                {
+                    Text = sign.ToString(),
+                    FontSize = 24,
+                };
+                // Применяем искажение
+                tb.RenderTransform = tg;
+
+                // Отображаем
+                Signs.Children.Add(tb);
+            }
+        }
+
+        // Создание искревлений
+        private TransformGroup Sign_Wrap()
+        {
+            // Группа искажений
+            TransformGroup tg = new TransformGroup();
+            // Поворот, перекос и отклонение
+            RotateTransform rt = new RotateTransform();
+            SkewTransform st = new SkewTransform();
+            TranslateTransform lt = new TranslateTransform();
+
+            Random rand = new Random();
+
+            rt.Angle = rand.Next(-34, 24);
+            st.AngleX = rand.Next(-24, 36);
+            st.AngleY = rand.Next(-34, 22);
+            lt.X = rand.Next(-3, 6);
+            lt.Y = rand.Next(-4, 8);
+
+            // Добавляем в группу
+            tg.Children.Add(rt);
+            tg.Children.Add(st);
+            tg.Children.Add(lt);
+
+            return tg;
+        }
+
+        private void ReButton_Click(object sender, RoutedEventArgs e)
+        {
+            Captcha_Generate();
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (AnswerBox.Text == CaptchaAnswer)
+            {
+                MessageBox.Show("Введено правильно");
+            }
+            else
+            {
+                MessageBox.Show("Введено неправильно");
+            }
+        }

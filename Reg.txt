@@ -1,0 +1,75 @@
+Авторизация
+
+Entities context = new Entities();
+            if (LoginBox.Text != "" && PasswordBox.Password != "")
+            {
+                var query = from account in context.Account
+                            where account.Login == LoginBox.Text
+                            select account;
+                if (query.FirstOrDefault() != null)
+                {
+                    if (query.First().Password == PasswordBox.Password)
+                    {
+                        MessageBox.Show(query.First().Permission.Title, "Вы вошли как:");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Неверный пароль");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Такого логина не существует");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Все поля должны быть заполненны");
+            }
+        }
+
+Регистрация
+
+ Entities context = new Entities();
+            if (LoginBox.Text != "" && PasswordBox.Password != "" && PasswordCheckBox.Password != "")
+            {
+                if (PasswordBox.Password == PasswordCheckBox.Password)
+                {
+                    var query = from account in context.Account
+                                where account.Login == LoginBox.Text
+                                select account;
+                    if (query.FirstOrDefault() == null)
+                    {
+                        Account acc = new Account
+                        {
+                            Login = LoginBox.Text,
+                            Password = PasswordBox.Password,
+                            PermissionID = 2
+                        };
+                        context.Account.Add(acc);
+                        context.SaveChanges();
+                        MessageBox.Show("Регистрация прошла успешно");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Логин занят");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("пароли не совпадают");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Все поля должны быть заполненны");
+            }
+
+Переход на стр
+
+ (App.Current.MainWindow as MainWindow).Presenter.Navigate(new SignIn());
+
+Фрейм
+
+<Frame x:Name="Presenter" NavigationUIVisibility="Hidden" Source="/Tryy;component/SignIn.xaml"></Frame>
+

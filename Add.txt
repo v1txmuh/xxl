@@ -1,0 +1,48 @@
+Поиск
+var query = from agent in context.Agents
+            where agent.Title.Contains(SearchBox.Text) 
+           agent.Email.Contains(SearchBox.Text) 
+          agent.Phone.Contains(SearchBox.Text)
+            select agent;
+// Сортировка
+            switch (SortBox.SelectedIndex)
+            {
+                case 1: // По возрастанию
+                    query = query.OrderBy(agent => agent.Title);
+                    break;
+                case 2: // По убыванию
+                    query = query.OrderByDescending(agent => agent.Title);
+                    break;
+            }
+// Фильтрация
+            if (FilterBox.SelectedIndex != 0)
+            {
+                string param = FilterBox.Text;
+
+                query = query.Where(agent => agent.AgentType == param)
+                    .Select(agent => agent);
+            }
+
+private void Dasd(Agent agent)
+        {
+            Entities context = new Entities(); // Подключение
+
+            // Удаление
+            var tmp = context.Agents.Find(agent.ID); // Связь с бд
+            context.Agents.Remove(tmp); // Удаление
+            context.SaveChanges(); // Сохранение изменений
+
+            // Добавление
+            Agent agent1 = new Agent() // Создаем пустой экземляр агента
+            {
+                Title = "asd", // Заполняем
+                Logo = "asdadasd"
+            };
+            context.Agents.Add(agent1); // Добавляем в БД
+            context.SaveChanges(); // Сохраняем
+
+            // Изменение
+            //var tmp = context.Agents.Find(agent.ID); // Связь с бд
+            tmp.Phone = "+800asdas"; // Изменения
+            context.SaveChanges();
+        }

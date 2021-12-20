@@ -1,0 +1,84 @@
+// Пагинация
+        // Массив каких-то данных
+        List<string> array = new List<string>();
+        decimal pageCount = 0; // Кол-во страниц (Просчитывается в Paginate)
+        int currentPage = 0; // Текущая страница
+
+        // Подготовка пагинации и добавление кнопок
+        private void Paginage()
+        {
+            const int pageSize = 10; // Кол-во элементов на странице (размер страницы)
+
+            //          Округление  (Кол-во элементов \ размер страницы)
+            pageCount = Math.Ceiling((decimal)array.Count / pageSize); // Количество страниц
+
+            // Создание кнопок назад вперед
+            Button nextPage = new Button();
+            Button prevPage = new Button();
+            // Добавляем контент
+            nextPage.Content = ">";
+            prevPage.Content = "<";
+            // Обработка кликов по ним
+            nextPage.Click += NextPageButton_Click;
+            prevPage.Click += PrevPageButton_Click;
+            ButtonsHost.Children.Add(prevPage); // Первой добавляется кнопка назад
+
+            // Создавать нумерные кнопки
+            for (int i = 0; i < pageCount; i++)
+            {
+                Button pageButton = new Button();
+                // Заполняем, обрабатываем
+                pageButton.Content = i + 1;
+                pageButton.Click += PageButton_Click;
+                // Добавляем
+                ButtonsHost.Children.Add(pageButton);
+            }
+            // В конце - кнопка вперед
+            ButtonsHost.Children.Add(nextPage);
+
+            // Отображаем первую страницу
+            Show(currentPage);
+        }
+
+        // Отображения элементов на странице (принимает номер страницы)
+        private void Show(int pageNum)
+        {
+            int counter = pageNum * 10; // Магия
+            for (int i = counter; i < counter + 10; i++)
+            {
+                // Если индекс в границах кол-ва элементов
+                if (i < array.Count())
+                {
+                    TextBlock textBlock = new TextBlock(); // Создаем какой-ниб элем
+                    textBlock.Text = array[i];
+                    // Добавляем на страницу
+                    PART_ContentHost.Children.Add(textBlock);
+                }
+            }
+        }
+        // События
+        // Следующая страница
+        private void NextPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Если текущая не превышает кол-во страниц
+            if (currentPage < pageCount)
+                Show(currentPage++); // Отображаем следующую
+        }
+
+        private void PrevPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Если текущая страница > 0 то назад
+            if (currentPage > 0)
+                Show(currentPage--);
+        }
+
+        // Нумерная страница
+        private void PageButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Получаем кликнутую кнопку
+            Button button = sender as Button;
+
+            // Парсим ее номер, и устанавливаем как текущую
+            currentPage = int.Parse(button.Content.ToString()) - 1;
+            Show(currentPage); // Отображаем
+        }
