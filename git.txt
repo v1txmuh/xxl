@@ -1,0 +1,8 @@
+cd -> Путь
+git init
+git config --global user.name "name"
+git config --global user.email "email"
+git add . (где "." добавить все что в папке)
+git commit -m "FirtsCommit"
+git remote add "имя папки" https://github.com/"u name"/name file
+git push namefile master
